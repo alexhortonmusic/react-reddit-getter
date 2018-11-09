@@ -1,28 +1,38 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import axios from 'axios'
 
-class App extends Component {
+export default class Reddit extends Component {
+
+  // must initialize state first before using axios or whatever!
+  state = {
+    posts: []
+  }
+
+  componentDidMount() {
+    axios.get(`https://www.reddit.com/r/reactjs.json`)
+    .then(res => {
+      const posts = res.data.data.children.map(obj => obj.data)
+      this.setState({ posts })
+      console.log(this.state.posts)
+    })
+  }
+
   render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+    return(
+      <div>
+        <h1>/r/reactjs</h1>
+        <ul>
+          { this.state.posts.map(post => (
+            <li key={ post.id }>
+              <a href={ post.url }>{ post.title }</a>
+              <br />
+              <p>Author: { post.author }</p>
+              <p>Upvotes: { post.score }</p>
+              <p>Comments: { post.num_comments }</p>
+            </li>
+          )) }
+        </ul>
       </div>
-    );
+    )
   }
 }
-
-export default App;
